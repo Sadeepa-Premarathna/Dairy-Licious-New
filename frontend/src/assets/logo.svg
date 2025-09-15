@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300">
+  <g>
+    <text x="500" y="150" font-family="Arial" font-size="100" text-anchor="middle" fill="#1E3A8A">
+      DAIRY LICIOUS
+    </text>
+    <g transform="translate(0, 0)">
+      <path d="M 950 150 C 950 100, 850 50, 750 50 C 650 50, 550 100, 550 150 C 550 200, 650 250, 750 250 C 850 250, 950 200, 950 150" fill="none" stroke="#22C55E" stroke-width="2"/>
+      <path d="M 900 150 C 900 120, 840 90, 780 90 C 720 90, 660 120, 660 150 C 660 180, 720 210, 780 210 C 840 210, 900 180, 900 150" fill="#22C55E" fill-opacity="0.2"/>
+      <path d="M 850 150 C 850 130, 810 110, 770 110 C 730 110, 690 130, 690 150 C 690 170, 730 190, 770 190 C 810 190, 850 170, 850 150" fill="#22C55E" fill-opacity="0.4"/>
+    </g>
+  </g>
+</svg>
