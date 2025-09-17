@@ -4,7 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import EmployeeRoutes from './Routes/HREmployeeRoutes.js';
-import Employee from './models/HREmployeeModel.js';
+import Employee from './Models/HREmployeeModel.js';
 
 dotenv.config();
 

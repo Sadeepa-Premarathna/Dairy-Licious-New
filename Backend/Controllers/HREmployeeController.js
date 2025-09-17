@@ -1,4 +1,4 @@
-import Employee from '../models/HREmployeeModel.js';
+import Employee from '../Models/HREmployeeModel.js';
 import mongoose from 'mongoose';
 
 // Get all employees

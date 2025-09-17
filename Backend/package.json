@@ -3,10 +3,10 @@
 	"version": "1.0.0",
 	"description": "HR Management backend API",
 	"type": "module",
-	"main": "app.js",
+	"main": "HRApp.js",
 	"scripts": {
-		"dev": "nodemon app.js",
-		"start": "node app.js"
+		"dev": "nodemon HRApp.js",
+		"start": "node HRApp.js"
 	},
 	"dependencies": {
 		"cors": "^2.8.5",
