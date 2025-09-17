@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Calendar, Clock, Users, Download, Upload, Search, Filter, ChevronLeft, ChevronRight, Edit, Check, X, AlertCircle } from 'lucide-react';
 import { AttendanceRecord, Employee } from '../data/mockData';
-import AttendanceCorrectionModal from '../components/AttendanceCorrectionModal';
-import BulkUploadModal from '../components/BulkUploadModal';
+import AttendanceCorrectionModal from '../components/HRAttendanceCorrectionModal';
+import BulkUploadModal from '../components/HRBulkUploadModal';
 
 interface AttendanceTrackingProps {
   employees: Employee[];

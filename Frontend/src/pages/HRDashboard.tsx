@@ -1,9 +1,9 @@
 import React from 'react';
 import KPICard from '../components/KPICard';
-import EmployeeGrowthChart from '../components/EmployeeGrowthChart';
-import AttendanceChart from '../components/AttendanceChart';
-import EmployeeInsights from '../components/EmployeeInsights';
-import RecentEmployeesTable from '../components/RecentEmployeesTable';
+import EmployeeGrowthChart from '../components/HREmployeeGrowthChart';
+import AttendanceChart from '../components/HRAttendanceChart';
+import EmployeeInsights from '../components/HREmployeeInsights';
+import RecentEmployeesTable from '../components/HRRecentEmployeesTable';
 import { DashboardData } from '../data/mockData';
 import { 
   Users, 

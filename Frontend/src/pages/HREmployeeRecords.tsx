@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Filter, Download, Plus, Edit2, Trash2 } from 'lucide-react';
 import { Employee } from '../data/mockData';
-import EmployeeDetailModal from '../components/EmployeeDetailModal';
-import AddEmployeeModal from '../components/AddEmployeeModal';
-import EditEmployeeModal from '../components/EditEmployeeModal';
+import EmployeeDetailModal from '../components/HREmployeeDetailModal';
+import AddEmployeeModal from '../components/HRAddEmployeeModal';
+import EditEmployeeModal from '../components/HREditEmployeeModal';
 
 interface EmployeeRecordsProps {
   employees: Employee[];

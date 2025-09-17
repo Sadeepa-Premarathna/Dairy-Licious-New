@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import EmployeeRoutes from './Routes/EmployeeRoutes.js';
-import Employee from './models/EmployeeModel.js';
+import EmployeeRoutes from './Routes/HREmployeeRoutes.js';
+import Employee from './models/HREmployeeModel.js';
 
 dotenv.config();
 

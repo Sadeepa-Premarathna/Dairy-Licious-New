@@ -16,8 +16,8 @@ import {
   X
 } from 'lucide-react';
 import { Employee, AttendanceRecord } from '../data/mockData';
-import PayrollConfigModal from '../components/PayrollConfigModal';
-import PayrollHistoryModal from '../components/PayrollHistoryModal';
+import PayrollConfigModal from '../components/HRPayrollConfigModal';
+import PayrollHistoryModal from '../components/HRPayrollHistoryModal';
 
 interface PayrollRecord {
   id: string;

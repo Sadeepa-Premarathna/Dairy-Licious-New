@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import TopNavigation from './components/TopNavigation';
-import Dashboard from './pages/Dashboard';
-import EmployeeRecords from './pages/EmployeeRecords';
-import AttendanceTracking from './pages/AttendanceTracking';
-import PayrollManagement from './pages/PayrollManagement';
-import LeaveManagement from './pages/LeaveManagement';
-import Reports from './pages/Reports';
+import Dashboard from './pages/HRDashboard';
+import EmployeeRecords from './pages/HREmployeeRecords';
+import AttendanceTracking from './pages/HRAttendanceTracking';
+import PayrollManagement from './pages/HRPayrollManagement';
+import LeaveManagement from './pages/HRLeaveManagement';
+import Reports from './pages/HRReports';
 import { getDashboardData, getAttendanceRecords, DashboardData, Employee, AttendanceRecord } from './data/mockData';
 
 function App() {
