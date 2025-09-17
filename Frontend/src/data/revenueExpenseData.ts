@@ -269,6 +269,8 @@ export const calculateTotals = () => {
   };
 };
 
+import { Users, Milk, Plus } from 'lucide-react';
+
 export const getExpenseCategories = (): ExpenseCategory[] => {
   const totals = calculateTotals();
   

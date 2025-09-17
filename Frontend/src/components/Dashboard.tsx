@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Milk, Users, Plus } from 'lucide-react';
-import FinancialCard from './FinancialCard';
-import ExpenseCard from './ExpenseCard';
-import RevenueChart from './RevenueChart';
+import FinancialCard from './finance_FinancialCard';
+import ExpenseCard from './finance_ExpenseCard';
+import RevenueChart from './finance_RevenueChart';
 import TransactionsTable from './TransactionsTable';
 import { 
   getFinancialOverview, 

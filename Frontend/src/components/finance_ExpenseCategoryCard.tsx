@@ -1,11 +1,11 @@
 import React from 'react';
-import { Users, Milk, Plus } from 'lucide-react';
+import { Plus, Users, Milk } from 'lucide-react';
 
 interface ExpenseCategoryCardProps {
   id: string;
   name: string;
   amount: number;
-  icon: string;
+  icon: React.ReactNode;
   color: string;
   bgColor: string;
   description: string;

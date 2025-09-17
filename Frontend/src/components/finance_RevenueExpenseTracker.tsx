@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, DollarSign, TrendingDown, Users, Milk, Plus } from 'lucide-react';
-import RevenueExpenseCard from './RevenueExpenseCard';
-import ExpenseCategoryCard from './ExpenseCategoryCard';
+import { ArrowLeft, DollarSign, TrendingDown } from 'lucide-react';
+import RevenueExpenseCard from './finance_RevenueExpenseCard';
+import ExpenseCategoryCard from './finance_ExpenseCategoryCard';
 import DataTable from './DataTable';
 import { 
   ViewType, 
-  BreadcrumbItem,
-  RevenueRecord,
-  SalaryRecord,
-  MilkPurchaseRecord,
-  AdditionalExpenseRecord
+  BreadcrumbItem
 } from '../types/revenue';
 import { 
   calculateTotals,

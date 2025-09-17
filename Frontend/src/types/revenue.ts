@@ -12,7 +12,7 @@ export interface ExpenseCategory {
   id: string;
   name: string;
   amount: number;
-  icon: React.ReactNode;
+  icon: string;
   color: string;
   bgColor: string;
   description: string;

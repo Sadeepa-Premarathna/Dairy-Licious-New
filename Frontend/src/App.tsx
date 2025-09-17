@@ -3,8 +3,8 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import PayrollDashboard from './components/PayrollDashboard';
-import RevenueExpenseTracker from './components/RevenueExpenseTracker';
-import AdditionalExpenses from './components/AdditionalExpenses';
+import RevenueExpenseTracker from './components/finance_RevenueExpenseTracker';
+import AdditionalExpenses from './components/finance_AdditionalExpenses';
 import ReportGeneration from './components/ReportGeneration';
 
 function App() {

@@ -1,4 +1,4 @@
-import AdditionalExpenses from '../Model/AdditionalExpensesModel.js';
+import AdditionalExpenses from '../Model/finance_AdditionalExpensesModel.js';
 
 // Get all additional expenses
 const getAllAdditionalExpenses = async (req, res) => {

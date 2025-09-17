@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllAdditionalExpenses, createAdditionalExpense, updateAdditionalExpense, deleteAdditionalExpense } from '../Controllers/AdditionalExpensesController.js';
+import { getAllAdditionalExpenses, createAdditionalExpense, updateAdditionalExpense, deleteAdditionalExpense } from '../Controllers/finance_AdditionalExpensesController.js';
 const router = express.Router();
 
 router.get('/', getAllAdditionalExpenses);
