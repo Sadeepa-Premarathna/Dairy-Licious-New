@@ -18,10 +18,19 @@ function RawMaterials() {
   const [formData, setFormData] = useState({
     name: '',
     category: '',
-    supplier: '',
+    supplier: {
+      name: '',
+      contact: '',
+      email: ''
+    },
     unit: 'kg',
     reorderLevel: 0,
     description: '',
+    storageConditions: {
+      temperature: '',
+      humidity: '',
+      specialRequirements: ''
+    }
   });
   const [receiveData, setReceiveData] = useState({
     materialId: '',
@@ -34,13 +43,12 @@ function RawMaterials() {
   });
 
   const categories = [
-    'Milk & Dairy',
-    'Packaging Materials',
-    'Preservatives',
-    'Flavoring Agents',
-    'Stabilizers',
-    'Cultures & Enzymes',
-    'Cleaning Supplies',
+    'Feed',
+    'Medicine',
+    'Equipment',
+    'Chemicals',
+    'Supplements',
+    'Packaging',
     'Other'
   ];
 
@@ -51,61 +59,12 @@ function RawMaterials() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // Since we don't have a specific raw materials endpoint, we'll create mock data
-      // In a real app, you would fetch from your API
-      const mockRawMaterials = [
-        {
-          _id: '1',
-          name: 'Fresh Milk',
-          category: 'Milk & Dairy',
-          unit: 'Liters',
-          onHand: 1500,
-          reorderLevel: 500,
-          unitCost: 0.85,
-          supplier: 'Local Dairy Farm',
-          lastReceived: new Date().toISOString(),
-          expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-        {
-          _id: '2',
-          name: 'Plastic Containers',
-          category: 'Packaging Materials',
-          unit: 'Units',
-          onHand: 250,
-          reorderLevel: 100,
-          unitCost: 0.15,
-          supplier: 'Packaging Solutions Inc',
-          lastReceived: new Date().toISOString(),
-          expiryDate: null,
-        },
-        {
-          _id: '3',
-          name: 'Yogurt Cultures',
-          category: 'Cultures & Enzymes',
-          unit: 'Packets',
-          onHand: 45,
-          reorderLevel: 20,
-          unitCost: 25.00,
-          supplier: 'BioLab Supplies',
-          lastReceived: new Date().toISOString(),
-          expiryDate: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString(),
-        },
-        {
-          _id: '4',
-          name: 'Calcium Chloride',
-          category: 'Stabilizers',
-          unit: 'kg',
-          onHand: 15,
-          reorderLevel: 25,
-          unitCost: 8.50,
-          supplier: 'Chemical Supply Co',
-          lastReceived: new Date().toISOString(),
-          expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-        }
-      ];
+      const response = await api.get('/rawMaterials');
+      setRawMaterials(response.data);
       
-      setRawMaterials(mockRawMaterials);
-      setSuppliers(['Local Dairy Farm', 'Packaging Solutions Inc', 'BioLab Supplies', 'Chemical Supply Co']);
+      // Extract unique suppliers from the raw materials
+      const uniqueSuppliers = [...new Set(response.data.map(material => material.supplier?.name).filter(Boolean))];
+      setSuppliers(uniqueSuppliers);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to load raw materials data');
@@ -118,21 +77,13 @@ function RawMaterials() {
     e.preventDefault();
     
     try {
-      // In a real app, you would post to your API
-      const newMaterial = {
-        _id: Date.now().toString(),
-        ...formData,
-        onHand: 0,
-        unitCost: 0,
-        lastReceived: null,
-        expiryDate: null,
-      };
-      
-      setRawMaterials([...rawMaterials, newMaterial]);
+      const response = await api.post('/rawMaterials', formData);
+      setRawMaterials([...rawMaterials, response.data]);
       toast.success('Raw material added successfully');
       setShowAddModal(false);
       resetForm();
     } catch (error) {
+      console.error('Error adding material:', error);
       toast.error('Failed to add raw material');
     }
   };
@@ -141,18 +92,19 @@ function RawMaterials() {
     e.preventDefault();
     
     try {
-      // In a real app, you would update through your API
+      const response = await api.post(`/rawMaterials/${receiveData.materialId}/receive`, {
+        quantity: parseInt(receiveData.quantity),
+        unitCost: parseFloat(receiveData.unitCost),
+        batchNo: receiveData.batchNo,
+        receivedDate: receiveData.receivedDate,
+        expiryDate: receiveData.expiryDate,
+        supplier: receiveData.supplier
+      });
+      
+      // Update the material in the list
       setRawMaterials(materials => 
         materials.map(material => 
-          material._id === receiveData.materialId
-            ? {
-                ...material,
-                onHand: material.onHand + parseInt(receiveData.quantity),
-                unitCost: parseFloat(receiveData.unitCost),
-                lastReceived: receiveData.receivedDate,
-                expiryDate: receiveData.expiryDate || material.expiryDate,
-              }
-            : material
+          material._id === receiveData.materialId ? response.data : material
         )
       );
       
@@ -160,6 +112,7 @@ function RawMaterials() {
       setShowReceiveModal(false);
       resetReceiveForm();
     } catch (error) {
+      console.error('Error receiving material:', error);
       toast.error('Failed to receive material');
     }
   };
@@ -168,10 +121,19 @@ function RawMaterials() {
     setFormData({
       name: '',
       category: '',
-      supplier: '',
+      supplier: {
+        name: '',
+        contact: '',
+        email: ''
+      },
       unit: 'kg',
       reorderLevel: 0,
       description: '',
+      storageConditions: {
+        temperature: '',
+        humidity: '',
+        specialRequirements: ''
+      }
     });
   };
 
@@ -194,8 +156,8 @@ function RawMaterials() {
   };
 
   const getStockStatus = (material) => {
-    if (material.onHand <= 0) return 'out-of-stock';
-    if (material.onHand <= material.reorderLevel) return 'low-stock';
+    if (material.currentStock <= 0) return 'out-of-stock';
+    if (material.currentStock <= material.reorderLevel) return 'low-stock';
     return 'in-stock';
   };
 
@@ -204,10 +166,10 @@ function RawMaterials() {
     const exportData = filteredMaterials.map(material => ({
       'Material Name': material.name,
       'Category': material.category,
-      'Stock on Hand': material.onHand || 0,
+      'Stock on Hand': material.currentStock || 0,
       'Unit': material.unit,
       'Unit Cost (Rs.)': material.unitCost || 0,
-      'Supplier': material.supplier,
+      'Supplier': material.supplier?.name || 'N/A',
       'Reorder Level': material.reorderLevel,
       'Stock Status': getStockStatus(material).replace('-', ' ').toUpperCase(),
       'Last Received': material.lastReceived ? new Date(material.lastReceived).toLocaleDateString() : 'N/A',
@@ -250,10 +212,10 @@ function RawMaterials() {
     const tableData = filteredMaterials.map(material => [
       material.name,
       material.category,
-      material.onHand || 0,
+      material.currentStock || 0,
       material.unit,
       `Rs. ${material.unitCost || 0}`,
-      material.supplier,
+      material.supplier?.name || 'N/A',
       getStockStatus(material).replace('-', ' ').toUpperCase()
     ]);
 
@@ -282,7 +244,7 @@ function RawMaterials() {
   const filteredMaterials = rawMaterials.filter(material => {
     const matchesSearch = material.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          material.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         material.supplier?.toLowerCase().includes(searchTerm.toLowerCase());
+                         material.supplier?.name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === 'all' || material.category === filterCategory;
     const status = getStockStatus(material);
     const matchesStatus = filterStatus === 'all' || status === filterStatus;
@@ -439,14 +401,13 @@ function RawMaterials() {
                 {/* Material Icon */}
                 <div className="relative h-48 mb-4 bg-gradient-to-br from-green-100 to-blue-100 rounded-xl overflow-hidden flex items-center justify-center">
                   <div className="text-6xl">
-                    {material.category === 'Milk & Dairy' && '🥛'}
-                    {material.category === 'Packaging Materials' && '📦'}
-                    {material.category === 'Cultures & Enzymes' && '🧪'}
-                    {material.category === 'Stabilizers' && '⚗️'}
-                    {material.category === 'Preservatives' && '🛡️'}
-                    {material.category === 'Flavoring Agents' && '🌿'}
-                    {material.category === 'Cleaning Supplies' && '🧽'}
-                    {!['Milk & Dairy', 'Packaging Materials', 'Cultures & Enzymes', 'Stabilizers', 'Preservatives', 'Flavoring Agents', 'Cleaning Supplies'].includes(material.category) && '📋'}
+                    {material.category === 'Feed' && '🌾'}
+                    {material.category === 'Medicine' && '�'}
+                    {material.category === 'Equipment' && '🔧'}
+                    {material.category === 'Chemicals' && '🧪'}
+                    {material.category === 'Supplements' && '�'}
+                    {material.category === 'Packaging' && '📦'}
+                    {!['Feed', 'Medicine', 'Equipment', 'Chemicals', 'Supplements', 'Packaging'].includes(material.category) && '📋'}
                   </div>
                   
                   {/* Status Badge */}
@@ -471,7 +432,7 @@ function RawMaterials() {
                       {material.name}
                     </h3>
                     <p className="text-sm text-gray-500">{material.category}</p>
-                    <p className="text-xs text-gray-400">{material.supplier}</p>
+                    <p className="text-xs text-gray-400">{material.supplier?.name || 'N/A'}</p>
                   </div>
 
                   {/* Stock Level Bar */}
@@ -479,7 +440,7 @@ function RawMaterials() {
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-600">Stock Level</span>
                       <span className="font-semibold text-gray-900">
-                        {material.onHand} {material.unit}
+                        {material.currentStock || 0} {material.unit}
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3">
@@ -489,13 +450,13 @@ function RawMaterials() {
                           status === 'low-stock' ? 'bg-yellow-500' : 'bg-green-500'
                         }`}
                         style={{
-                          width: `${Math.min((material.onHand / (material.reorderLevel * 2 || 50)) * 100, 100)}%`
+                          width: `${Math.min(((material.currentStock || 0) / (material.reorderLevel * 2 || 50)) * 100, 100)}%`
                         }}
                       ></div>
                     </div>
                     <div className="flex justify-between text-xs text-gray-500 mt-1">
                       <span>Reorder: {material.reorderLevel}</span>
-                      <span>{Math.round((material.onHand / (material.reorderLevel * 2 || 50)) * 100)}%</span>
+                      <span>{Math.round(((material.currentStock || 0) / (material.reorderLevel * 2 || 50)) * 100)}%</span>
                     </div>
                   </div>
 
@@ -643,15 +604,52 @@ function RawMaterials() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Supplier
+                    Supplier Name
                   </label>
                   <input
                     type="text"
-                    value={formData.supplier}
-                    onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
+                    value={formData.supplier.name}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      supplier: { ...formData.supplier, name: e.target.value } 
+                    })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter supplier name"
                   />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Supplier Contact
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.supplier.contact}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        supplier: { ...formData.supplier, contact: e.target.value } 
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                      placeholder="Contact number"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Supplier Email
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.supplier.email}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        supplier: { ...formData.supplier, email: e.target.value } 
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                      placeholder="supplier@email.com"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -664,6 +662,44 @@ function RawMaterials() {
                     rows="3"
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter description"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Storage Conditions
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      value={formData.storageConditions.temperature}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        storageConditions: { ...formData.storageConditions, temperature: e.target.value } 
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                      placeholder="Temperature range"
+                    />
+                    <input
+                      type="text"
+                      value={formData.storageConditions.humidity}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        storageConditions: { ...formData.storageConditions, humidity: e.target.value } 
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                      placeholder="Humidity level"
+                    />
+                  </div>
+                  <textarea
+                    value={formData.storageConditions.specialRequirements}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      storageConditions: { ...formData.storageConditions, specialRequirements: e.target.value } 
+                    })}
+                    rows="2"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 mt-2"
+                    placeholder="Special storage requirements"
                   />
                 </div>
 

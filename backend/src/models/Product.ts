@@ -1,6 +1,20 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-const ProductSchema = new mongoose.Schema(
+export interface IProduct extends Document {
+  name: string;
+  sku: string;
+  category: string;
+  unit: 'pcs' | 'kg' | 'L';
+  price: number;
+  supplier: string;
+  reorderLevel: number;
+  expiryDate?: Date;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const ProductSchema = new Schema<IProduct>(
   {
     name: { type: String, required: true, trim: true },
     sku: { type: String, required: true, trim: true },
@@ -17,6 +31,4 @@ const ProductSchema = new mongoose.Schema(
 
 ProductSchema.index({ sku: 1 }, { unique: true });
 
-export default mongoose.model('Product', ProductSchema);
-
-
+export default mongoose.model<IProduct>('Product', ProductSchema);

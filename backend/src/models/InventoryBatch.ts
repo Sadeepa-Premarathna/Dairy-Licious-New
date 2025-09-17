@@ -1,8 +1,20 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-const InventoryBatchSchema = new mongoose.Schema(
+export interface IInventoryBatch extends Document {
+  product: mongoose.Types.ObjectId;
+  batchNo: string;
+  quantity: number;
+  remaining: number;
+  unitCost: number;
+  expiryDate?: Date;
+  receivedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const InventoryBatchSchema = new Schema<IInventoryBatch>(
   {
-    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
     batchNo: { type: String, default: '' },
     quantity: { type: Number, required: true, min: 0 },
     remaining: { type: Number, required: true, min: 0 },
@@ -21,6 +33,4 @@ InventoryBatchSchema.pre('save', function (next) {
   next();
 });
 
-export default mongoose.model('InventoryBatch', InventoryBatchSchema);
-
-
+export default mongoose.model<IInventoryBatch>('InventoryBatch', InventoryBatchSchema);

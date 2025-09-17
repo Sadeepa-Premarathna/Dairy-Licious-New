@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "src/server.js",
+  "main": "src/server.ts",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
-    "seed": "node src/seed.js"
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "mock": "tsx src/server-with-mock.ts",
+    "mock:dev": "tsx watch src/server-with-mock.ts",
+    "build": "tsc",
+    "seed": "tsx src/seed.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -17,7 +20,14 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.5.1",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   }
 }
-

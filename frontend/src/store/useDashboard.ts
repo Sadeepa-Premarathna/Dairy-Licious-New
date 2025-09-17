@@ -1,7 +1,19 @@
 import { create } from 'zustand';
-import api from '../api/axios.js';
+import api from '../api/axios';
+import type { DashboardData } from '../types';
 
-const useDashboard = create((set, get) => ({
+interface DashboardState {
+  kpis: DashboardData | null;
+  series: any | null;
+  loading: boolean;
+  error: string | null;
+  fetchKPIs: () => Promise<void>;
+  fetchSeries: () => Promise<void>;
+  fetchAll: () => Promise<void>;
+  clearError: () => void;
+}
+
+const useDashboard = create<DashboardState>((set) => ({
   // State
   kpis: null,
   series: null,
@@ -12,9 +24,9 @@ const useDashboard = create((set, get) => ({
   fetchKPIs: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await api.get('/dashboard/kpis');
+      const response = await api.get<DashboardData>('/dashboard/kpis');
       set({ kpis: response.data, loading: false });
-    } catch (error) {
+    } catch (error: any) {
       set({ error: error.message, loading: false });
     }
   },
@@ -24,7 +36,7 @@ const useDashboard = create((set, get) => ({
     try {
       const response = await api.get('/dashboard/series');
       set({ series: response.data, loading: false });
-    } catch (error) {
+    } catch (error: any) {
       set({ error: error.message, loading: false });
     }
   },
@@ -33,7 +45,7 @@ const useDashboard = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const [kpisRes, seriesRes] = await Promise.all([
-        api.get('/dashboard/kpis'),
+        api.get<DashboardData>('/dashboard/kpis'),
         api.get('/dashboard/series')
       ]);
       set({ 
@@ -41,7 +53,7 @@ const useDashboard = create((set, get) => ({
         series: seriesRes.data, 
         loading: false 
       });
-    } catch (error) {
+    } catch (error: any) {
       set({ error: error.message, loading: false });
     }
   },
