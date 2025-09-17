@@ -46,4 +46,8 @@ const additionalExpensesSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('AdditionalExpenses', additionalExpensesSchema);
+export default mongoose.model(
+  "AdditionalExpense",            // model name (can be anything)
+  additionalExpensesSchema,
+  "additionalexpenses"            // <— this MUST match the collection in test DB exactly
+);

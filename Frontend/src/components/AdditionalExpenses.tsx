@@ -103,10 +103,16 @@ const AdditionalExpenses: React.FC = () => {
   const validateForm = (data: CreateExpenseRequest): Record<string, string> => {
     const errors: Record<string, string> = {};
     
-    if (!data.category) errors.category = 'Category is required';
-    if (!data.description.trim()) errors.description = 'Description is required';
-    if (!data.date) errors.date = 'Date is required';
-    if (!data.amount || data.amount <= 0) errors.amount = 'Amount must be greater than 0';
+    // Validate all fields
+    (Object.keys(data) as Array<keyof CreateExpenseRequest>).forEach((field) => {
+      const value = data[field];
+      if (value !== undefined) {
+        const error = validateField(field, value);
+        if (error) {
+          errors[field] = error;
+        }
+      }
+    });
     
     return errors;
   };
@@ -116,12 +122,53 @@ const AdditionalExpenses: React.FC = () => {
     setToast({ message, type, isVisible: true });
   };
 
+  // Validate single field
+  const validateField = (field: keyof CreateExpenseRequest, value: string | number): string => {
+    switch (field) {
+      case 'category':
+        if (!value) return 'Category is required';
+        if (!categoryOptions.slice(1).some(opt => opt.value === value)) return 'Please select a valid category';
+        break;
+        
+      case 'description':
+        if (!String(value).trim()) return 'Description is required';
+        if (String(value).trim().length < 5) return 'Description must be at least 5 characters long';
+        if (String(value).trim().length > 200) return 'Description must not exceed 200 characters';
+        break;
+        
+      case 'date':
+        if (!value) return 'Date is required';
+        const selectedDate = new Date(String(value));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (selectedDate > today) return 'Future dates are not allowed';
+        
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        if (selectedDate < oneYearAgo) return 'Date cannot be more than 1 year old';
+        break;
+        
+      case 'amount':
+        const amount = Number(value);
+        if (!amount || amount <= 0) return 'Amount must be greater than 0';
+        if (amount > 1000000) return 'Amount exceeds maximum limit of $1,000,000';
+        if (!Number.isInteger(amount * 100)) return 'Amount cannot have more than 2 decimal places';
+        break;
+    }
+    return '';
+  };
+
   // Form handlers
   const handleInputChange = (field: keyof CreateExpenseRequest, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (formErrors[field]) {
-      setFormErrors(prev => ({ ...prev, [field]: '' }));
-    }
+    
+    // Validate the field immediately
+    const error = validateField(field, value);
+    setFormErrors(prev => ({
+      ...prev,
+      [field]: error
+    }));
   };
 
   const resetForm = () => {
@@ -452,10 +499,11 @@ const AdditionalExpenses: React.FC = () => {
           />
           <Input
             label="Description"
-            placeholder="Enter expense description..."
+            placeholder="Enter expense description (5-200 characters)..."
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
             error={formErrors.description}
+            maxLength={200}
           />
           <Input
             label="Date"
@@ -463,6 +511,8 @@ const AdditionalExpenses: React.FC = () => {
             value={formData.date}
             onChange={(e) => handleInputChange('date', e.target.value)}
             error={formErrors.date}
+            max={new Date().toISOString().split('T')[0]}
+            min={new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0]}
           />
           <Input
             label="Amount"
@@ -511,10 +561,11 @@ const AdditionalExpenses: React.FC = () => {
           />
           <Input
             label="Description"
-            placeholder="Enter expense description..."
+            placeholder="Enter expense description (5-200 characters)..."
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
             error={formErrors.description}
+            maxLength={200}
           />
           <Input
             label="Date"
@@ -522,6 +573,8 @@ const AdditionalExpenses: React.FC = () => {
             value={formData.date}
             onChange={(e) => handleInputChange('date', e.target.value)}
             error={formErrors.date}
+            max={new Date().toISOString().split('T')[0]}
+            min={new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0]}
           />
           <Input
             label="Amount"

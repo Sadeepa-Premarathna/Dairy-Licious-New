@@ -3,6 +3,10 @@ import AdditionalExpenses from '../Model/AdditionalExpensesModel.js';
 // Get all additional expenses
 const getAllAdditionalExpenses = async (req, res) => {
   try {
+    const collectionName = AdditionalExpenses.collection?.name;
+    const count = await AdditionalExpenses.countDocuments();
+    console.log(`[AdditionalExpenses] collection=${collectionName} count=${count}`);
+
     const additionalExpenses = await AdditionalExpenses.find().sort({ date: -1 });
     return res.status(200).json(additionalExpenses);
   } catch (error) {

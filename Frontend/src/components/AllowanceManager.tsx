@@ -174,7 +174,7 @@ const AllowanceManager: React.FC = () => {
       <div className="bg-blue-50 rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-blue-600 font-medium">Total Allowances</p>
+            <p className="text-sm text-blue-600 font-medium">Total Allowances </p>
             <p className="text-2xl font-bold text-blue-900">
               {new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR', minimumFractionDigits: 0 }).format(totalAllowances)}
             </p>

@@ -28,9 +28,12 @@ if (!process.env.MONGODB_URI) {
     process.exit(1);
 }
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DB || 'test' })
   .then(() => {
-      console.log("Connected to MongoDB");
+      const conn = mongoose.connection;
+      const dbName = conn?.name;
+      const host = conn?.host;
+      console.log(`Connected to MongoDB db=${dbName} host=${host}`);
       app.listen(process.env.PORT || 8000, () => {
           console.log(`Server running on http://localhost:${process.env.PORT || 8000}`);
       });
