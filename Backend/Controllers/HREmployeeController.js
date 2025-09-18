@@ -12,6 +12,7 @@ export const getAllEmployees = async (req, res) => {
     if (status) filter.status = status;
 
     const employees = await Employee.find(filter).sort({ createdAt: -1 });
+    console.log(`📊 Retrieved ${employees.length} employees from MongoDB`);
     return res.status(200).json(employees);
   } catch (error) {
     console.error('Error fetching employees:', error);
@@ -86,6 +87,10 @@ export const createEmployee = async (req, res) => {
       address, gender
     });
 
+    console.log(`🎉 SUCCESS: Employee created in MongoDB: ${name} (ID: ${employee_id})`);
+    console.log(`📦 MongoDB database: ${mongoose.connection.db.databaseName}`);
+    console.log(`📋 Collection: employees`);
+    
     return res.status(201).json(employee);
   } catch (error) {
     console.error('Error creating employee:', error);
@@ -141,6 +146,7 @@ export const updateEmployee = async (req, res) => {
     const employee = await Employee.findByIdAndUpdate(id, updates, { new: true });
     if (!employee) return res.status(404).json({ message: 'Employee not found' });
 
+    console.log(`✅ Employee updated in MongoDB: ${employee.name} (ID: ${employee.employee_id})`);
     return res.status(200).json(employee);
   } catch (error) {
     console.error('Error updating employee:', error);
@@ -163,6 +169,7 @@ export const deleteEmployee = async (req, res) => {
     const employee = await Employee.findByIdAndDelete(id);
     if (!employee) return res.status(404).json({ message: 'Employee not found' });
 
+    console.log(`🗑️ Employee deleted from MongoDB: ${employee.name} (ID: ${employee.employee_id})`);
     return res.status(204).send();
   } catch (error) {
     console.error('Error deleting employee:', error);

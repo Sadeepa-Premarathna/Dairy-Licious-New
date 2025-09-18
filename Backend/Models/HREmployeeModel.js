@@ -38,4 +38,13 @@ const EmployeeSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('Employee', EmployeeSchema, 'employees');
+let Employee;
+try {
+  // Check if model already exists
+  Employee = mongoose.model('Employee');
+} catch (error) {
+  // Model doesn't exist, create it
+  Employee = mongoose.model('Employee', EmployeeSchema, 'employees');
+}
+
+export default Employee;
