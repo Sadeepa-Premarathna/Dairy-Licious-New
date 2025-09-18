@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Search, Edit, Trash2, Filter, DollarSign, Calendar, Tag, FileText, Truck, Monitor, Shield } from 'lucide-react';
-import { Expense, CreateExpenseRequest, UpdateExpenseRequest, ExpenseFilters } from '../types/expense';
+import { Expense, CreateExpenseRequest, ExpenseFilters } from '../types/expense';
 import { expenseService } from '../services/expenseService';
 import Button from './ui/Button';
 import Input from './ui/Input';
@@ -37,22 +37,26 @@ const AdditionalExpenses: React.FC = () => {
     isVisible: false
   });
 
-  // Category options - dynamically generated from database data
-  const categoryOptions = useMemo(() => {
-    // Get unique categories from expenses data
-    const uniqueCategories = [...new Set(expenses.map(expense => expense.category))];
-    
-    // Create options array with "All Categories" first, then all unique categories
-    const options = [
+  // Removed dynamic categoryOptions to enforce fixed categories
+
+  // Fixed category options for the form (Add/Edit)
+  const formCategoryOptions = useMemo(() => (
+    [
+      { value: 'Software', label: 'Software' },
+      { value: 'Maintenance', label: 'Maintenance' },
+      { value: 'Machine repair', label: 'Machine repair' },
+      { value: 'Utilities', label: 'Utilities' },
+      { value: 'Animal care', label: 'Animal care' }
+    ]
+  ), []);
+
+  // Fixed category options for the filter dropdown (includes "All Categories")
+  const filterCategoryOptions = useMemo(() => (
+    [
       { value: '', label: 'All Categories' },
-      ...uniqueCategories.map(category => ({
-        value: category,
-        label: category
-      }))
-    ];
-    
-    return options;
-  }, [expenses]);
+      ...formCategoryOptions
+    ]
+  ), [formCategoryOptions]);
 
   // Load expenses on component mount
   useEffect(() => {
@@ -81,8 +85,9 @@ const AdditionalExpenses: React.FC = () => {
     });
 
     filtered.sort((a, b) => {
-      let aValue = sortField === 'date' ? new Date(a.date).getTime() : a.amount;
-      let bValue = sortField === 'date' ? new Date(b.date).getTime() : b.amount;
+      // When sorting by date, use createdAt to ensure newly added records appear first
+      let aValue = sortField === 'date' ? new Date(a.createdAt).getTime() : a.amount;
+      let bValue = sortField === 'date' ? new Date(b.createdAt).getTime() : b.amount;
       
       if (sortDirection === 'asc') {
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
@@ -127,26 +132,36 @@ const AdditionalExpenses: React.FC = () => {
     switch (field) {
       case 'category':
         if (!value) return 'Category is required';
-        if (!categoryOptions.slice(1).some(opt => opt.value === value)) return 'Please select a valid category';
+        if (!formCategoryOptions.some(opt => opt.value === value)) return 'Please select a valid category';
         break;
         
       case 'description':
         if (!String(value).trim()) return 'Description is required';
-        if (String(value).trim().length < 5) return 'Description must be at least 5 characters long';
-        if (String(value).trim().length > 200) return 'Description must not exceed 200 characters';
+        {
+          const text = String(value).trim();
+          const lettersAndSpacesOnly = /^[A-Za-z\s]+$/;
+          if (!lettersAndSpacesOnly.test(text)) {
+            return 'Description can contain letters and spaces only';
+          }
+          if (text.length < 5) return 'Description must be at least 5 characters long';
+          if (text.length > 200) return 'Description must not exceed 200 characters';
+        }
         break;
         
       case 'date':
         if (!value) return 'Date is required';
-        const selectedDate = new Date(String(value));
+        // Parse date as local (YYYY-MM-DD becomes local midnight) to avoid UTC offset issues
+        const [yearStr, monthStr, dayStr] = String(value).split('-');
+        const selectedDate = new Date(Number(yearStr), Number(monthStr) - 1, Number(dayStr));
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
-        if (selectedDate > today) return 'Future dates are not allowed';
+        if (selectedDate.getTime() > today.getTime()) return 'Future dates are not allowed';
         
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-        if (selectedDate < oneYearAgo) return 'Date cannot be more than 1 year old';
+        oneYearAgo.setHours(0, 0, 0, 0);
+        if (selectedDate.getTime() < oneYearAgo.getTime()) return 'Date cannot be more than 1 year old';
         break;
         
       case 'amount':
@@ -266,9 +281,9 @@ const AdditionalExpenses: React.FC = () => {
 
   // Format currency
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-LK', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'LKR',
       minimumFractionDigits: 2
     }).format(amount);
   };
@@ -288,6 +303,8 @@ const AdditionalExpenses: React.FC = () => {
         return <Tag className="w-4 h-4 text-blue-600" />;
       case 'maintenance':
         return <FileText className="w-4 h-4 text-orange-600" />;
+      case 'machine repair':
+        return <FileText className="w-4 h-4 text-orange-600" />;
       case 'utilities':
         return <DollarSign className="w-4 h-4 text-green-600" />;
       case 'logistics':
@@ -296,6 +313,8 @@ const AdditionalExpenses: React.FC = () => {
         return <Monitor className="w-4 h-4 text-indigo-600" />;
       case 'health & safety':
         return <Shield className="w-4 h-4 text-red-600" />;
+      case 'animal care':
+        return <Shield className="w-4 h-4 text-green-600" />;
       default:
         return <Calendar className="w-4 h-4 text-gray-600" />;
     }
@@ -307,6 +326,8 @@ const AdditionalExpenses: React.FC = () => {
         return 'bg-blue-100 text-blue-800';
       case 'maintenance':
         return 'bg-orange-100 text-orange-800';
+      case 'machine repair':
+        return 'bg-orange-100 text-orange-800';
       case 'utilities':
         return 'bg-green-100 text-green-800';
       case 'logistics':
@@ -315,6 +336,8 @@ const AdditionalExpenses: React.FC = () => {
         return 'bg-indigo-100 text-indigo-800';
       case 'health & safety':
         return 'bg-red-100 text-red-800';
+      case 'animal care':
+        return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -327,7 +350,7 @@ const AdditionalExpenses: React.FC = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Additional Expenses Management
+              Additional Expenses Management 
             </h1>
             <p className="text-gray-600">
               Manage factory operational expenses and track spending across categories
@@ -352,7 +375,7 @@ const AdditionalExpenses: React.FC = () => {
               />
             </div>
             <Select
-              options={categoryOptions}
+              options={filterCategoryOptions}
               value={filters.category}
               onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
             />
@@ -492,7 +515,7 @@ const AdditionalExpenses: React.FC = () => {
         <div className="space-y-4">
           <Select
             label="Category"
-            options={categoryOptions.slice(1)} // Remove "All Categories" option
+            options={formCategoryOptions}
             value={formData.category}
             onChange={(e) => handleInputChange('category', e.target.value)}
             error={formErrors.category}
@@ -554,7 +577,7 @@ const AdditionalExpenses: React.FC = () => {
         <div className="space-y-4">
           <Select
             label="Category"
-            options={categoryOptions.slice(1)}
+            options={formCategoryOptions}
             value={formData.category}
             onChange={(e) => handleInputChange('category', e.target.value)}
             error={formErrors.category}

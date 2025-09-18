@@ -10,7 +10,8 @@ import Toast from './ui/Toast';
 // Import for PDF generation
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const ReportGeneration: React.FC = () => {
   const [filters, setFilters] = useState<ReportFilters>({
@@ -134,17 +135,43 @@ const ReportGeneration: React.FC = () => {
     }
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     if (!hasGenerated) return;
     
     setExporting(true);
     
     try {
       const metadata = getReportMetadata();
-      const workbook = XLSX.utils.book_new();
-      
+      const workbook = new ExcelJS.Workbook();
+
+      const addSheetWithData = (title: string, rows: (string | number)[][]) => {
+        const sheet = workbook.addWorksheet(title);
+        rows.forEach((row) => {
+          sheet.addRow(row);
+        });
+        // Basic styling: bold header rows
+        const headerRows = [1, 5];
+        headerRows.forEach((rowIndex) => {
+          const row = sheet.getRow(rowIndex);
+          row.font = { bold: true };
+        });
+        // Compute column widths without relying on eachCell typing
+        const columnCount = sheet.columnCount;
+        for (let c = 1; c <= columnCount; c++) {
+          const column = sheet.getColumn(c);
+          let maxLength = 10;
+          for (let r = 1; r <= sheet.rowCount; r++) {
+            const cell = sheet.getCell(r, c);
+            const val = (cell && cell.value) as string | number | null;
+            const len = val ? String(val).length : 0;
+            if (len > maxLength) maxLength = len;
+          }
+          column.width = Math.min(60, Math.max(12, maxLength + 2));
+        }
+      };
+
       if (filters.reportType === 'Payroll' && payrollData) {
-        const data = [
+        const rows: (string | number)[][] = [
           ['DairyLicious - Payroll Report'],
           [`Period: ${metadata.timePeriod}`],
           [`Generated: ${metadata.generatedDate} at ${metadata.generatedTime}`],
@@ -161,11 +188,9 @@ const ReportGeneration: React.FC = () => {
           ['Average Gross Salary', payrollData.totalGrossSalary / payrollData.totalEmployees],
           ['Average Net Salary', payrollData.totalNetSalary / payrollData.totalEmployees]
         ];
-        
-        const worksheet = XLSX.utils.aoa_to_sheet(data);
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Payroll Report');
+        addSheetWithData('Payroll Report', rows);
       } else if (filters.reportType === 'Performance' && performanceData) {
-        const data = [
+        const rows: (string | number)[][] = [
           ['DairyLicious - Performance Report'],
           [`Period: ${metadata.timePeriod}`],
           [`Generated: ${metadata.generatedDate} at ${metadata.generatedTime}`],
@@ -181,12 +206,12 @@ const ReportGeneration: React.FC = () => {
           ['Milk Purchases', performanceData.expenseBreakdown.milkPurchases],
           ['Additional Expenses', performanceData.expenseBreakdown.additionalExpenses]
         ];
-        
-        const worksheet = XLSX.utils.aoa_to_sheet(data);
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Performance Report');
+        addSheetWithData('Performance Report', rows);
       }
-      
-      XLSX.writeFile(workbook, getFileName('xlsx'));
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, getFileName('xlsx'));
       showToast('Excel file exported successfully', 'success');
     } catch (error) {
       showToast('Failed to export Excel file', 'error');
@@ -276,8 +301,8 @@ const ReportGeneration: React.FC = () => {
         <>
           <ReportPreview
             reportType={filters.reportType}
-            payrollData={payrollData}
-            performanceData={performanceData}
+            payrollData={payrollData ?? undefined}
+            performanceData={performanceData ?? undefined}
             metadata={getReportMetadata()}
           />
 

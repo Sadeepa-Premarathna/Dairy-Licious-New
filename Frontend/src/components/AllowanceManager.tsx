@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Filter } from 'lucide-react';
+import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
 import Input from './ui/Input';
@@ -24,6 +24,7 @@ const AllowanceManager: React.FC = () => {
     amount: 0,
     month: new Date().toISOString().slice(0, 7) // YYYY-MM format
   });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const allowanceTypes = [
     { value: 'Food', label: 'Food Allowance' },
@@ -45,6 +46,18 @@ const AllowanceManager: React.FC = () => {
     { value: '2024-11', label: 'November 2024' },
     { value: '2024-12', label: 'December 2024' }
   ];
+
+  const formatYearMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  };
+  const currentMonth = formatYearMonth(new Date());
+  const minSelectableMonth = (() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 10);
+    return formatYearMonth(d);
+  })();
 
   // Fetch allowances
   const fetchAllowances = async () => {
@@ -76,6 +89,12 @@ const AllowanceManager: React.FC = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Validate form before submit
+    const errors = validateForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
     try {
       if (editingAllowance) {
         await allowanceService.updateAllowance(editingAllowance.id, formData);
@@ -127,6 +146,42 @@ const AllowanceManager: React.FC = () => {
       amount: 0,
       month: new Date().toISOString().slice(0, 7)
     });
+    setFormErrors({});
+  };
+
+  // Validation helpers
+  const validateField = (field: keyof AllowanceFormData, value: string | number): string => {
+    switch (field) {
+      case 'amount': {
+        const amount = Number(value);
+        if (!amount || amount <= 0) return 'Amount must be greater than 0';
+        if (amount > 1000000) return 'Amount exceeds maximum limit of $1,000,000';
+        if (!Number.isInteger(amount * 100)) return 'Amount cannot have more than 2 decimal places';
+        break;
+      }
+    }
+    return '';
+  };
+
+  const validateForm = (data: AllowanceFormData): Record<string, string> => {
+    const errors: Record<string, string> = {};
+    const fieldsToValidate: Array<keyof AllowanceFormData> = ['amount'];
+    fieldsToValidate.forEach((field) => {
+      const error = validateField(field, data[field] as unknown as string | number);
+      if (error) {
+        errors[field] = error;
+      }
+    });
+    return errors;
+  };
+
+  // Generic input change with immediate validation
+  const handleInputChange = (field: keyof AllowanceFormData, value: string | number) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    const error = validateField(field, value);
+    if (error || formErrors[field as string]) {
+      setFormErrors(prev => ({ ...prev, [field]: error }));
+    }
   };
 
   // Open modal for new allowance
@@ -361,12 +416,13 @@ const AllowanceManager: React.FC = () => {
               </label>
               <Input
                 type="number"
-                value={formData.amount}
-                onChange={(e) => setFormData(prev => ({ ...prev, amount: parseFloat(e.target.value) || 0 }))}
+                value={formData.amount || ''}
+                onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
                 required
                 min="0"
                 step="0.01"
                 placeholder="0.00"
+                error={formErrors.amount}
               />
             </div>
 
@@ -374,12 +430,14 @@ const AllowanceManager: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Month
               </label>
-                             <Select
-                 value={formData.month}
-                 onChange={(e) => setFormData(prev => ({ ...prev, month: e.target.value }))}
-                 required
-                 options={months}
-               />
+              <Input
+                type="month"
+                value={formData.month}
+                onChange={(e) => setFormData(prev => ({ ...prev, month: e.target.value }))}
+                required
+                min={minSelectableMonth}
+                max={currentMonth}
+              />
             </div>
           </div>
 
