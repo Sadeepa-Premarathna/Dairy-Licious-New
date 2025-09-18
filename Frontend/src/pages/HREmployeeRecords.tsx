@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Filter, Download, Plus, Edit2, Trash2 } from 'lucide-react';
 import { Employee } from '../data/mockData';
 import EmployeeDetailModal from '../components/HREmployeeDetailModal';
-import AddEmployeeModal from '../components/HRAddEmployeeModal';
+import AddEmployeeModalEnhanced from '../components/HRAddEmployeeModalEnhanced';
 import EditEmployeeModal from '../components/HREditEmployeeModal';
 
 interface EmployeeRecordsProps {
@@ -417,13 +417,12 @@ const EmployeeRecords: React.FC<EmployeeRecordsProps> = ({ employees, onEmployee
 
       {/* Add Employee Modal */}
       {showAddModal && (
-        <AddEmployeeModal
+        <AddEmployeeModalEnhanced
           onClose={() => setShowAddModal(false)}
           onCreate={(emp) => {
             onEmployeeCreate && onEmployeeCreate(emp);
             setShowAddModal(false);
           }}
-          existingDepartments={[...new Set(employees.map(e => e.department))].sort()}
         />
       )}
 
