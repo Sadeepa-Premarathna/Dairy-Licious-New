@@ -13,6 +13,7 @@ type FormState = {
   name: string;
   nic: string;
   email: string;
+  countryCode: string;
   phone: string;
   role: string;
   date_of_birth: string;
@@ -29,6 +30,7 @@ const initialState: FormState = {
   name: '',
   nic: '',
   email: '',
+  countryCode: '+94',
   phone: '',
   role: '',
   date_of_birth: '',
@@ -40,10 +42,23 @@ const initialState: FormState = {
   gender: '',
 };
 
+const countryCodes = [
+  { code: '+94', flag: '🇱🇰', name: 'Sri Lanka' },
+  { code: '+91', flag: '🇮🇳', name: 'India' },
+  { code: '+1', flag: '🇺🇸', name: 'USA' },
+  { code: '+44', flag: '🇬🇧', name: 'UK' },
+  { code: '+61', flag: '🇦🇺', name: 'Australia' },
+  { code: '+65', flag: '🇸🇬', name: 'Singapore' },
+  { code: '+60', flag: '🇲🇾', name: 'Malaysia' },
+  { code: '+971', flag: '🇦🇪', name: 'UAE' },
+  { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+  { code: '+974', flag: '🇶🇦', name: 'Qatar' }
+];
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phoneRegex = /^[0-9+\-()\s]{7,20}$/;
-// Simple NIC validation (adapt to LK NIC formats if needed)
-const nicRegex = /^[A-Za-z0-9]{8,15}$/;
+const employeeIdRegex = /^EMP\d{4}$/;
+// NIC validation for Sri Lankan format: 9 digits + V/v
+const nicRegex = /^\d{9}[Vv]$/;
 
 const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onCreate, existingDepartments }) => {
   const [form, setForm] = useState<FormState>(initialState);
@@ -53,6 +68,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onCreate, 
     name: false,
     nic: false,
     email: false,
+    countryCode: false,
     phone: false,
     role: false,
     date_of_birth: false,
@@ -72,13 +88,14 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onCreate, 
   const errors = useMemo(() => {
     const e: Partial<Record<keyof FormState, string>> = {};
     if (!form.employee_id.trim()) e.employee_id = 'Employee ID is required';
+    else if (!employeeIdRegex.test(form.employee_id.trim())) e.employee_id = 'Employee ID must be in format EMP#### (e.g., EMP0001)';
     if (!form.name.trim()) e.name = 'Full name is required';
     if (!form.nic.trim()) e.nic = 'NIC is required';
-    else if (!nicRegex.test(form.nic.trim())) e.nic = 'NIC format is invalid';
+    else if (!nicRegex.test(form.nic.trim())) e.nic = 'NIC must be 9 digits followed by V or v (e.g., 123456789V)';
     if (!form.email.trim()) e.email = 'Email is required';
     else if (!emailRegex.test(form.email.trim())) e.email = 'Email is invalid';
     if (!form.phone.trim()) e.phone = 'Phone is required';
-    else if (!phoneRegex.test(form.phone.trim())) e.phone = 'Phone is invalid';
+    else if (!/^\d{10}$/.test(form.phone.trim())) e.phone = 'Enter a valid phone number with country code.';
     if (!form.role.trim()) e.role = 'Role is required';
     if (!form.date_of_birth) e.date_of_birth = 'Date of birth is required';
     if (!form.basic_salary) e.basic_salary = 'Base salary is required';
@@ -114,7 +131,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onCreate, 
         name: form.name.trim(),
         NIC: form.nic.trim(),
         email: form.email.trim(),
-        phone: form.phone.trim(),
+        phone: form.countryCode + form.phone.trim(),
         role: form.role.trim(),
         date_of_birth: form.date_of_birth,
         basic_salary: Number(form.basic_salary),
@@ -189,7 +206,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onCreate, 
                 value={form.employee_id}
                 onChange={(e) => setField('employee_id', e.target.value)}
                 onBlur={() => setTouched(prev => ({ ...prev, employee_id: true }))}
-                placeholder="Enter Employee ID"
+                placeholder="e.g., EMP0001"
               />
               {touched.employee_id && errors.employee_id && <p className="text-xs text-red-600 mt-1">{errors.employee_id}</p>}
             </div>
@@ -213,7 +230,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onCreate, 
                 value={form.nic}
                 onChange={(e) => setField('nic', e.target.value)}
                 onBlur={() => setTouched(prev => ({ ...prev, nic: true }))}
-                placeholder="National ID"
+                placeholder="e.g., 123456789V"
               />
               {touched.nic && errors.nic && <p className="text-xs text-red-600 mt-1">{errors.nic}</p>}
             </div>
@@ -233,14 +250,29 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onCreate, 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input
-                className={`w-full px-3 py-2 border rounded-lg ${touched.phone && errors.phone ? 'border-red-500' : 'border-gray-300'}`}
-                value={form.phone}
-                onChange={(e) => setField('phone', e.target.value)}
-                onBlur={() => setTouched(prev => ({ ...prev, phone: true }))}
-                placeholder="e.g., +94 77 123 4567"
-              />
+              <div className="flex gap-2">
+                <select
+                  className="px-3 py-2 border rounded-lg border-gray-300 bg-white min-w-[120px]"
+                  value={form.countryCode}
+                  onChange={(e) => setField('countryCode', e.target.value)}
+                >
+                  {countryCodes.map(country => (
+                    <option key={country.code} value={country.code}>
+                      {country.flag} {country.code}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  className={`flex-1 px-3 py-2 border rounded-lg ${touched.phone && errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+                  value={form.phone}
+                  onChange={(e) => setField('phone', e.target.value.replace(/\D/g, ''))}
+                  onBlur={() => setTouched(prev => ({ ...prev, phone: true }))}
+                  placeholder="7712345678"
+                  maxLength={10}
+                />
+              </div>
               {touched.phone && errors.phone && <p className="text-xs text-red-600 mt-1">{errors.phone}</p>}
+              <p className="text-xs text-gray-500 mt-1">Enter exactly 10 digits (no spaces or dashes)</p>
             </div>
 
             <div>

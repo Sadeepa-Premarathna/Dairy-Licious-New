@@ -41,10 +41,10 @@ const createEmployeeSchema = Joi.object({
     }),
 
   phone: Joi.string()
-    .pattern(/^\d{10,15}$/)
+    .pattern(/^\+\d{1,4}\d{10}$/)
     .required()
     .messages({
-      'string.pattern.base': 'Phone number must be between 10-15 digits only',
+      'string.pattern.base': 'Enter a valid phone number with country code (e.g., +94XXXXXXXXXX).',
       'any.required': 'Phone number is required'
     }),
 

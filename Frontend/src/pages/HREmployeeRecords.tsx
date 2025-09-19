@@ -16,8 +16,8 @@ const EmployeeRecords: React.FC<EmployeeRecordsProps> = ({ employees, onEmployee
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState('recent');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -49,40 +49,42 @@ const EmployeeRecords: React.FC<EmployeeRecordsProps> = ({ employees, onEmployee
       return matchesSearch && matchesDepartment && matchesRole && matchesStatus;
     });
 
-    // Sort employees
-    filtered.sort((a, b) => {
-      let aValue: any, bValue: any;
-      
-      switch (sortBy) {
-        case 'name':
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-          break;
-        case 'dateOfBirth':
-          aValue = new Date(a.dateOfBirth);
-          bValue = new Date(b.dateOfBirth);
-          break;
-        case 'joinDate':
-          aValue = new Date(a.joinDate);
-          bValue = new Date(b.joinDate);
-          break;
-        case 'salary':
-          aValue = a.salary;
-          bValue = b.salary;
-          break;
-        case 'employeeId':
-          aValue = a.employeeId;
-          bValue = b.employeeId;
-          break;
-        default:
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-      }
+    // Sort employees (skip sorting for 'recent' to preserve backend order)
+    if (sortBy !== 'recent') {
+      filtered.sort((a, b) => {
+        let aValue: any, bValue: any;
+        
+        switch (sortBy) {
+          case 'name':
+            aValue = a.name.toLowerCase();
+            bValue = b.name.toLowerCase();
+            break;
+          case 'dateOfBirth':
+            aValue = new Date(a.dateOfBirth);
+            bValue = new Date(b.dateOfBirth);
+            break;
+          case 'joinDate':
+            aValue = new Date(a.joinDate);
+            bValue = new Date(b.joinDate);
+            break;
+          case 'salary':
+            aValue = a.salary;
+            bValue = b.salary;
+            break;
+          case 'employeeId':
+            aValue = a.employeeId;
+            bValue = b.employeeId;
+            break;
+          default:
+            aValue = a.name.toLowerCase();
+            bValue = b.name.toLowerCase();
+        }
 
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
+        if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
 
     return filtered;
   }, [employees, searchTerm, selectedDepartment, selectedRole, selectedStatus, sortBy, sortOrder]);
@@ -253,6 +255,7 @@ const EmployeeRecords: React.FC<EmployeeRecordsProps> = ({ employees, onEmployee
                     }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
+                    <option value="recent-desc">Recently Added</option>
                     <option value="name-asc">Name (A-Z)</option>
                     <option value="name-desc">Name (Z-A)</option>
                     <option value="joinDate-desc">Join Date (Newest)</option>

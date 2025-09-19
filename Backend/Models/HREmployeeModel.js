@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const phoneRegex = /^[0-9+\-()\s]{7,20}$/;
+const phoneRegex = /^\+\d{1,4}\d{10}$/;
 
 const EmployeeSchema = new mongoose.Schema(
   {
