@@ -14,9 +14,11 @@ mongoose.connect("mongodb+srv://admin:rwZTHKZ4jbDuMFMu@cluster0.82iazhd.mongodb.
 
 // Import routes
 const milkRoutes = require("./routes/milkRoutes");
+const productRoutes = require("./routes/productRoutes");
 
 // Routes
 app.use("/api/milk", milkRoutes);
+app.use("/api/products", productRoutes);
 
 // Test API
 app.get("/", (req, res) => {

@@ -10,6 +10,7 @@ import DriversList from './components/DriversList';
 import OrdersList from './components/OrdersList';
 import TrackingList from './components/TrackingList';
 import ExpensesManagement from './components/ExpensesManagement';
+import AdminProductManagement from './components/AdminProductManagement';
 
 function AppContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -19,7 +20,8 @@ function AppContent() {
     const menuItems = [
     { icon: '📊', label: 'Dashboard', path: '/' },
     { icon: '🥛', label: 'Raw Milk', path: '/rawmilk' },
-    { icon: '🚚', label: 'Drivers', path: '/drivers' },
+    { icon: '�', label: 'Products', path: '/products' },
+    { icon: '�🚚', label: 'Drivers', path: '/drivers' },
     { icon: '📋', label: 'Orders', path: '/orders' },
     { icon: '📍', label: 'Tracking', path: '/tracking' },
     { icon: '💰', label: 'Expenses', path: '/expenses' }
@@ -119,6 +121,7 @@ function AppContent() {
               <Route path="/" element={<MilkRecordList />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/raw-milk" element={<RawMilkRecords />} />
+              <Route path="/products" element={<AdminProductManagement />} />
               <Route path="/drivers" element={<DriversList />} />
               <Route path="/orders" element={<OrdersList />} />
               <Route path="/tracking" element={<TrackingList />} />
