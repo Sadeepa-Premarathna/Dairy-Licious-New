@@ -1,0 +1,363 @@
+.milk-record-detail {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.back-btn {
+  background: #6c757d;
+  color: white;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background: #545b62;
+  transform: translateY(-1px);
+}
+
+.record-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn {
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.edit-btn:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+/* Record Content */
+.record-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.record-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.record-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.record-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.farmer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.farmer-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.farmer-id {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+.status,
+.quality {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.status-collected { background: #d4edda; color: #155724; }
+.status-transit { background: #fff3cd; color: #856404; }
+.status-delivered { background: #d1ecf1; color: #0c5460; }
+.status-pending { background: #f8d7da; color: #721c24; }
+
+.quality-a { background: #d4edda; color: #155724; }
+.quality-b { background: #fff3cd; color: #856404; }
+.quality-c { background: #f8d7da; color: #721c24; }
+
+.date-info {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.date-info div {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-info strong {
+  color: #333;
+  margin-right: 0.5rem;
+}
+
+/* Record Body */
+.record-body {
+  margin-bottom: 2rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.info-section h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  border-bottom: 2px solid #f8f9fa;
+  padding-bottom: 0.5rem;
+}
+
+.info-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.info-item label {
+  font-weight: 500;
+  color: #666;
+}
+
+.info-item span {
+  font-weight: 600;
+  color: #333;
+}
+
+.quantity {
+  color: #007bff;
+  font-size: 1.1rem;
+}
+
+.total-amount {
+  color: #28a745;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.info-item.total {
+  border-top: 1px solid #e9ecef;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.quality-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Notes Section */
+.notes-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f8f9fa;
+}
+
+.notes-section h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.notes-content {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.notes-content p {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.notes-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Detail Navigation */
+.detail-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.detail-navigation .nav-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.detail-navigation .nav-link:hover {
+  background: #f0f3ff;
+  transform: translateY(-1px);
+}
+
+/* Error and Loading States */
+.error-container {
+  text-align: center;
+  padding: 3rem;
+}
+
+.error-container .error {
+  margin-bottom: 1.5rem;
+}
+
+.not-found {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.not-found h2 {
+  font-size: 2rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.not-found .back-btn {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .milk-record-detail {
+    margin: 0;
+  }
+  
+  .detail-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .record-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .record-content {
+    padding: 1.5rem;
+    border-radius: 0;
+    margin: -1rem -1rem 2rem -1rem;
+  }
+  
+  .record-header h1 {
+    font-size: 2rem;
+  }
+  
+  .record-meta {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .status-info {
+    text-align: left;
+    flex-direction: row;
+  }
+  
+  .date-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-navigation {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .detail-navigation .nav-link {
+    text-align: center;
+  }
+}
