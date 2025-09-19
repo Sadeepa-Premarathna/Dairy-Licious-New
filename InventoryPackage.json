@@ -1,0 +1,15 @@
+{
+  "name": "inventory-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Public MERN inventory dashboard",
+  "type": "module",
+  "scripts": {
+    "install-all": "npm --prefix backend i && npm --prefix frontend i",
+    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
+
