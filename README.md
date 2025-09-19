@@ -1,21 +1,48 @@
-<<<<<<< HEAD
-# Dairy-Licious-New
-New Repo
-=======
-# Dairy-Licious - Milk Collection & Distribution System
+# 🥛 Dairy Licious - Complete Dairy Farm Management System
 
-A comprehensive milk collection and distribution management system built with React and Node.js.
+A comprehensive dairy farm management system that handles milk collection, employee management, financial tracking, and product management.
 
-## Features
+## 🚀 Features
 
-- **Dashboard**: Overview and analytics for milk collection operations
-- **Raw Milk Records**: Track and manage milk collection data
-- **Driver Management**: Manage delivery drivers and their assignments
-- **Order Management**: Handle customer orders and distribution
-- **Tracking System**: Real-time tracking of milk deliveries
-- **Expense Management**: Calculate milk collection costs and profit margins
+### 📊 **Dashboard & Analytics**
+- Financial overview with revenue and expense tracking
+- Real-time KPI monitoring
+- Interactive charts and reports
+- Performance analytics
 
-## Tech Stack
+### 🥛 **Milk Management**
+- Raw milk collection tracking
+- Quality control records
+- Supplier management
+- Batch tracking and traceability
+
+### 👥 **Human Resources**
+- Employee management system
+- Attendance tracking and reporting
+- Payroll calculation and management
+- Leave management
+- Performance monitoring
+
+### 💰 **Financial Management**
+- Expense tracking and categorization
+- Revenue analysis
+- Profit/loss calculations
+- Budget planning and forecasting
+- Financial reporting
+
+### 📦 **Product Management**
+- Inventory management
+- Product catalog
+- Stock level monitoring
+- Order management
+
+### 🚚 **Distribution & Logistics**
+- Driver management
+- Delivery tracking
+- Route optimization
+- Customer order management
+
+## 🛠 Tech Stack
 
 ### Frontend
 - React 19.1.1 with TypeScript
